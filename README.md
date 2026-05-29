@@ -87,7 +87,7 @@ Nemori only reads these variables; it never writes secrets to disk. 🔒
 
 Model choices:
 
-- `gpt-5-mini` (`openai/gpt-5-mini` on OpenRouter): recommended GPT-5 default
+- `gpt-5-mini` (`openai/gpt-5-mini` on OpenRouter): recommended GPT-5 option
   for a balance of quality, cost, and reliability in memory generation.
 - `gpt-5-nano` (`openai/gpt-5-nano` on OpenRouter): lowest-cost GPT-5
   option, best for simpler summarization and classification tasks.
@@ -109,7 +109,6 @@ async def main():
     # DSN, API keys, base URLs, and model defaults are resolved from environment variables.
     # Override model names here only when you need per-instance settings.
     config = MemoryConfig(
-        llm_model="openai/gpt-4.1-mini",
         embedding_model="google/gemini-embedding-001",
     )
     async with NemoriMemory(config) as memory:
