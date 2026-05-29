@@ -54,7 +54,7 @@ async def test_complete_adapts_gpt5_params():
         call_kwargs = mock_client.chat.completions.create.call_args[1]
         assert call_kwargs["model"] == "gpt-5-nano"
         assert call_kwargs["max_completion_tokens"] == 100
-        assert call_kwargs["reasoning_effort"] == "minimal"
+        assert "reasoning_effort" not in call_kwargs
         assert "max_tokens" not in call_kwargs
         assert "temperature" not in call_kwargs
 

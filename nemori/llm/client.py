@@ -12,7 +12,6 @@ logger = logging.getLogger("nemori")
 
 DEFAULT_OPENAI_CHAT_MODEL = "gpt-4o-mini"
 GPT5_MODEL_PREFIXES = ("gpt-5",)
-DEFAULT_GPT5_REASONING_EFFORT = "minimal"
 
 
 def _base_model_name(model: str) -> str:
@@ -41,9 +40,7 @@ def _chat_completion_kwargs(
         params["max_completion_tokens"] = extra.pop(
             "max_completion_tokens", max_tokens
         )
-        reasoning_effort = extra.pop(
-            "reasoning_effort", DEFAULT_GPT5_REASONING_EFFORT
-        )
+        reasoning_effort = extra.pop("reasoning_effort", None)
         if reasoning_effort is not None:
             params["reasoning_effort"] = reasoning_effort
     else:
