@@ -11,5 +11,10 @@ is not where our releasable work belongs.)
 
 # Subagents
 
-尽可能使用subagent team来完成复杂任务，且必须使用opus 4.6作为驱动所有subagents的模型
-(Prefer subagent teams for complex tasks; drive all subagents with Opus.)
+Use subagents for complex tasks.
+
+Choose the appropriate agent for each task:
+- Use specialized agents when their domain matches the work.
+- Use research/explorer agents for read-only codebase investigation and upstream comparison.
+- Use custom agents when the task needs a focused role that the default agents do not cover.
+- Choose the smallest capable model for each subagent based on task difficulty, cost, and risk; do not default all subagents to premium models.

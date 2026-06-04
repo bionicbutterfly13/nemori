@@ -247,3 +247,6 @@ report.md
 plan.md
 
 assets/plot_locomo_llm_scores.py
+
+# Local agent state
+.serena/
