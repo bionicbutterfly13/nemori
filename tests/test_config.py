@@ -88,3 +88,8 @@ def test_config_invalid_search_top_k_episodes():
 def test_config_invalid_search_top_k_semantic():
     with pytest.raises(ConfigError, match="search_top_k_semantic"):
         MemoryConfig(search_top_k_semantic=0)
+
+
+def test_config_auto_process_defaults_enabled():
+    cfg = MemoryConfig()
+    assert cfg.auto_process is True

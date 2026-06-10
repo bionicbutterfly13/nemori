@@ -159,3 +159,38 @@ async def test_dedupe_semantic_disabled_via_config(deps):
     result = await sys_no_dedup._dedupe_semantic("u1", [mem])
     assert result[0].id == original_id
     deps["qdrant"].search_semantic.assert_not_called()
+@pytest.mark.asyncio
+async def test_add_messages_can_skip_auto_processing(deps):
+    deps["config"] = MemoryConfig(auto_process=False)
+    deps["buffer_store"].count_unprocessed = AsyncMock(return_value=10)
+    deps["buffer_store"].get_unprocessed = AsyncMock(return_value=[])
+    deps["search"].search = AsyncMock(return_value=SearchResult())
+    system = MemorySystem(**deps)
+
+    await system.add_messages("u1", [Message(role="user", content="hi")])
+
+    assert system._tasks == set()
+
+
+@pytest.mark.asyncio
+async def test_list_episodes_delegates_to_store(system, deps):
+    deps["episode_store"].list_by_user = AsyncMock(return_value=[])
+
+    result = await system.list_episodes("u1", limit=25)
+
+    assert result == []
+    deps["episode_store"].list_by_user.assert_called_once_with(
+        "u1", "default", limit=25
+    )
+
+
+@pytest.mark.asyncio
+async def test_list_semantic_memories_delegates_to_store(system, deps):
+    deps["semantic_store"].list_by_user = AsyncMock(return_value=[])
+
+    result = await system.list_semantic_memories("u1", memory_type="fact")
+
+    assert result == []
+    deps["semantic_store"].list_by_user.assert_called_once_with(
+        "u1", "default", memory_type="fact"
+    )

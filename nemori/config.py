@@ -69,6 +69,7 @@ class MemoryConfig:
     qdrant_collection_prefix: str = "nemori"
 
     # Buffer & Generation
+    auto_process: bool = True
     buffer_size_min: int = 2
     buffer_size_max: int = 25
     enable_batch_segmentation: bool = True

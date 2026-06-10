@@ -170,6 +170,18 @@ class NemoriMemory:
         )
         return result.to_dict()
 
+    async def list_episodes(self, user_id: str, limit: int = 100) -> list[dict[str, Any]]:
+        system = self._ensure_system()
+        episodes = await system.list_episodes(user_id, limit=limit)
+        return [e.to_dict() for e in episodes]
+
+    async def list_semantic_memories(
+        self, user_id: str, memory_type: str | None = None
+    ) -> list[dict[str, Any]]:
+        system = self._ensure_system()
+        memories = await system.list_semantic_memories(user_id, memory_type=memory_type)
+        return [m.to_dict() for m in memories]
+
     async def delete_episode(self, user_id: str, episode_id: str) -> None:
         system = self._ensure_system()
         await system.delete_episode(user_id, episode_id)

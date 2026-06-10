@@ -135,3 +135,51 @@ async def test_facade_not_initialized_raises():
     memory = NemoriMemory()
     with pytest.raises(RuntimeError, match="not initialized"):
         await memory.add_messages("u1", [{"role": "user", "content": "hi"}])
+
+
+@pytest.mark.asyncio
+async def test_facade_list_episodes():
+    with (
+        patch("nemori.api.facade.DatabaseManager") as MockDB,
+        patch("nemori.api.facade.QdrantVectorStore") as MockQdrant,
+        patch("nemori.api.facade.NemoriMemory._build_system", new_callable=AsyncMock),
+    ):
+        MockDB.return_value = AsyncMock()
+        MockQdrant.return_value = MagicMock()
+
+        config = MemoryConfig(dsn="postgresql://localhost/test", llm_api_key="test")
+        async with NemoriMemory(config=config) as memory:
+            episode = MagicMock()
+            episode.to_dict.return_value = {"id": "ep-1"}
+            memory._system = AsyncMock()
+            memory._system.list_episodes = AsyncMock(return_value=[episode])
+
+            result = await memory.list_episodes("u1", limit=10)
+
+            assert result == [{"id": "ep-1"}]
+            memory._system.list_episodes.assert_called_once_with("u1", limit=10)
+
+
+@pytest.mark.asyncio
+async def test_facade_list_semantic_memories():
+    with (
+        patch("nemori.api.facade.DatabaseManager") as MockDB,
+        patch("nemori.api.facade.QdrantVectorStore") as MockQdrant,
+        patch("nemori.api.facade.NemoriMemory._build_system", new_callable=AsyncMock),
+    ):
+        MockDB.return_value = AsyncMock()
+        MockQdrant.return_value = MagicMock()
+
+        config = MemoryConfig(dsn="postgresql://localhost/test", llm_api_key="test")
+        async with NemoriMemory(config=config) as memory:
+            semantic = MagicMock()
+            semantic.to_dict.return_value = {"id": "sem-1"}
+            memory._system = AsyncMock()
+            memory._system.list_semantic_memories = AsyncMock(return_value=[semantic])
+
+            result = await memory.list_semantic_memories("u1", memory_type="fact")
+
+            assert result == [{"id": "sem-1"}]
+            memory._system.list_semantic_memories.assert_called_once_with(
+                "u1", memory_type="fact"
+            )

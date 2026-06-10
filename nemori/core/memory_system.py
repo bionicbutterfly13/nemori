@@ -77,7 +77,7 @@ class MemorySystem:
         """Add messages to the buffer. Triggers processing if buffer is ready."""
         await self._buffer_store.push(user_id, self._agent_id, messages)
         count = await self._buffer_store.count_unprocessed(user_id, self._agent_id)
-        if count >= self._config.buffer_size_min:
+        if self._config.auto_process and count >= self._config.buffer_size_min:
             task = asyncio.create_task(self._process(user_id))
             self._tasks.add(task)
             task.add_done_callback(self._tasks.discard)
@@ -247,6 +247,16 @@ class MemorySystem:
             top_k_episodes=top_k_episodes or self._config.search_top_k_episodes,
             top_k_semantic=top_k_semantic or self._config.search_top_k_semantic,
             method=method,
+        )
+
+    async def list_episodes(self, user_id: str, limit: int = 100) -> list[Episode]:
+        return await self._episode_store.list_by_user(user_id, self._agent_id, limit=limit)
+
+    async def list_semantic_memories(
+        self, user_id: str, memory_type: str | None = None
+    ) -> list[SemanticMemory]:
+        return await self._semantic_store.list_by_user(
+            user_id, self._agent_id, memory_type=memory_type
         )
 
     async def delete_episode(self, user_id: str, episode_id: str) -> None:
